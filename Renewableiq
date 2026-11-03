@@ -1,0 +1,93 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+st.set_page_config(
+    page_title="RenewableIQ",
+    page_icon="🌱",
+    layout="wide"
+)
+
+st.title("🌱 RenewableIQ")
+st.subheader("AI-Based Renewable Energy Potential Estimator")
+st.write("Explore renewable energy opportunities across Punjab.")
+
+districts = [
+    "Amritsar", "Jalandhar", "Ludhiana",
+    "Bathinda", "Pathankot"
+]
+
+district = st.selectbox(
+    "Select your district",
+    districts
+)
+
+st.sidebar.header("Environmental Information")
+
+sunlight = st.sidebar.slider(
+    "Solar resource index (demo)",
+    1, 10, 7
+)
+
+wind = st.sidebar.slider(
+    "Wind resource index (demo)",
+    1, 10, 5
+)
+
+temperature = st.sidebar.slider(
+    "Average temperature (°C)",
+    10, 45, 30
+)
+
+if st.button("Analyse Renewable Potential"):
+    
+    # Illustrative screening scores, not measured data
+    solar_score = sunlight * 10
+    wind_score = wind * 10
+
+    st.header(f"Results for {district}")
+
+    col1, col2 = st.columns(2)
+
+    col1.metric(
+        "Solar suitability index",
+        f"{solar_score}/100"
+    )
+
+    col2.metric(
+        "Wind suitability index",
+        f"{wind_score}/100"
+    )
+
+    results = pd.DataFrame({
+        "Energy Source": ["Solar", "Wind"],
+        "Suitability": [solar_score, wind_score]
+    })
+
+    fig = px.bar(
+        results,
+        x="Energy Source",
+        y="Suitability",
+        color="Energy Source",
+        title="Renewable Energy Comparison",
+        range_y=[0, 100]
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    if solar_score >= wind_score:
+        st.success(
+            "Solar energy has the higher preliminary "
+            "suitability score in this demonstration."
+        )
+    else:
+        st.success(
+            "Wind energy has the higher preliminary "
+            "suitability score in this demonstration."
+        )
+
+    st.info(
+        "Prototype demonstration only. "
+        "These scores are illustrative, not actual "
+        "regional measurements or AI predictions."
+    )
